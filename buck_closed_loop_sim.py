@@ -52,6 +52,15 @@ integral_error = 0  # PI controller integral error term
 pi_output = 0
 duty_cycle = nominal_duty
 
+# Low pass filter parameters
+# fc = 5000           # Filter cutoff frequency (Hz)
+# alpha = 0.0         # Filter coefficient (calculated below)
+
+# Low pass filter initialization
+# wc = 2 * math.pi * fc                # Cutoff frequency in rad/s
+# alpha = (Tsw * wc) / (1 + Tsw * wc)  # Filter coefficient
+# Vc_filtered = 0.0                    # Filtered output voltage
+
 # initializing arrays for data storage
 time = []
 inductor_current = []
@@ -72,7 +81,10 @@ for i in range(num_steps):
     # PI controller - operating at switching frequency
     controller_step = int(Tsw/time_step)
     if (i % controller_step == 0):    # will execute once every cycle
-
+        
+        # Low pass filter for output voltage feedback
+        # First-order discrete filter: y[n] = α*x[n] + (1-α)*y[n-1]
+        # Vc_filtered = alpha * Vc + (1 - alpha) * Vc_filtered
         
         #calculate error
         error = Vref - Vc
