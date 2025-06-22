@@ -65,7 +65,7 @@ error_term = []
 for i in range(num_steps):
     t = i * time_step
 
-    if i>25000:
+    if i > num_steps/2:
         Vref = 12
         nominal_duty = Vref/Vin     
         # necessary to update nominal duty otherwise the controller action will not follow reference correctly
