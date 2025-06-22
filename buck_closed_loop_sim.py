@@ -72,6 +72,7 @@ for i in range(num_steps):
     # PI controller - operating at switching frequency
     controller_step = int(Tsw/time_step)
     if (i % controller_step == 0):    # will execute once every cycle
+
         
         #calculate error
         error = Vref - Vc
@@ -90,12 +91,9 @@ for i in range(num_steps):
         # Clamp duty cycle to limits
         if duty_cycle > duty_max:
             duty_cycle = duty_max
-            # Anti-windup: prevent integral from growing when saturated
-            # integral_error -= (duty_cycle - duty_max) / Ki
+        
         elif duty_cycle < duty_min:
             duty_cycle = duty_min
-            # Anti-windup: prevent integral from shrinking when saturated
-            # integral_error -= (duty_cycle - duty_min) / Ki
 
     # deciding whether switch is ON or OFF based on duty cycle
     if (t_mod < (duty_cycle*Tsw)):
@@ -126,6 +124,13 @@ for i in range(num_steps):
     # discrete integration is done using Euler method
     iL = iL + (diL_dt * time_step)
     Vc = Vc + (dVc_dt * time_step)
+
+    # Ensure physical constraints
+    # if iL < 0 and not switch_state:
+    #     # Discontinuous conduction mode
+    #     iL = 0
+    #     dVc_dt = -Vc / (R * C)
+    #     Vc = Vc + (dVc_dt * time_step)
 
     time.append(t)
     inductor_current.append(iL)
