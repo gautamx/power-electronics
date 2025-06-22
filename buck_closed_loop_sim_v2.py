@@ -38,9 +38,10 @@ delta_Vout = delta_Vout_pu * Vref
 C = (delta_iL * Tsw) / (8 * delta_Vout)
 
 # simulation params
-sim_time = 1e-3     # simulation time of 0.05s
+sim_time = 5e-3     # simulation time of 0.05s
 time_step = 1e-7     # 0.1us time step
 num_steps = int(sim_time/time_step)
+# print(num_steps)
 
 dt = time_step
 
@@ -63,6 +64,11 @@ error_term = []
 # simulation loop
 for i in range(num_steps):
     t = i * time_step
+
+    if i>25000:
+        Vref = 12
+        nominal_duty = Vref/Vin     
+        # necessary to update nominal duty otherwise the controller action will not follow reference correctly
 
     # dividing the 't' value, which increments in units of 'time_step', with switching time period. 
     # The remainder (t_mod) keeps increasing until we hit the end of one cycle. 
