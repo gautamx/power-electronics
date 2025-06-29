@@ -1,4 +1,4 @@
-# **Synchronous Reference Frame - Phase Locked Loop**
+# **Single-Phase Synchronous Reference Frame - Phase Locked Loop**
 
 
 Developed a single-phase Synchronous Reference Frame Phase-Locked Loop (SRF PLL) using Python procedural algorithm implementation
