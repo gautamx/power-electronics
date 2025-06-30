@@ -1,4 +1,4 @@
-# **Digital Implementation of PI Controller in a Closed-loop Buck Converter Using Explicit Mathematical Modelling in Python**
+# **Digital Implementation of a Closed-loop Buck Converter Using Explicit Mathematical Modellin**
 
 •	Designed and implemented a closed-loop PI controller for a buck converter operating at 50-200 kHz switching frequency, achieving stable voltage regulation with ~5% output ripple\
 •	Developed a comprehensive simulation model in Python, integrating power stage dynamics, feedback control, and switching behavior with microsecond-level time resolution\
