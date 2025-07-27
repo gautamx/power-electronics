@@ -29,7 +29,7 @@ v_in = np.sin(w_in*t) \
 # SOGI-PLL params
 k = 1.0                 # gain of SOGI
 w_nom = 2*np.pi*50      # nominal grid angular freq (omega)
-kp = 20      # PLL PI controller proportional gain
+kp = 20     # PLL PI controller proportional gain
 ki = 5      # PLL PI controller integral gain
 
 
@@ -68,7 +68,9 @@ for n in range(num_steps):
     # SOGI states
     dx1 = w_nom * ( (k*e) - x2 )
     dx2 = w_nom * x1
-    # w_nom or w_est??
+    # SOGI behaves like a band-pass filter centered at w_nom
+    # w_est changes over time which would destabilize or detune the filter
+    # it would constantly shift the center frequency of the filter
 
     x1 += dx1 * dt
     x2 += dx2 * dt
@@ -77,14 +79,15 @@ for n in range(num_steps):
     v_beta = x2
 
     # ===== Park Transform =====
-    cos_theta = np.cos(theta_est)       # in MCU implementation we use a lookup table here
+    cos_theta = np.cos(theta_est)
     sin_theta = np.sin(theta_est)
+    # in MCU implementation we use a lookup table here
 
     vd = v_alpha*cos_theta + v_beta*sin_theta
     vq = v_alpha*(-sin_theta) + v_beta*cos_theta
 
     # ===== PLL PI Controller =====
-    vq_int += vq + dt   # vq integrator
+    vq_int += vq * dt   # vq integrator
     
     w_est = (kp*vq) + (ki*vq_int) + w_nom
 
