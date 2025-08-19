@@ -1,0 +1,66 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# deciding time-step
+# typical power converter switching frequency ~5kHz
+# cycle time period of 200us -- sampling time
+
+# time-step should be << 200us
+# let time-step for signal generation be 1us
+
+t_duration = 1.0
+t_step = 1.0e-6
+
+num_samples = int(t_duration/t_step)
+
+# generate an array from 0 to (10^6 - 1)
+# mult t_step to get each time instant
+time_array = np.arange(num_samples)*t_step
+
+freq = 50.0     # 50Hz
+omega = 2*np.pi*freq    # rad/s
+mag = 5.0
+C = 100.0e-6    # 100uF capacitor
+
+# sinusoidal input signal generation
+current_signal = mag*np.sin(omega*time_array)
+
+t_sample = 200.0e-6
+num_skip = int(t_sample/t_step)
+
+tsample_array = time_array[::num_skip]
+current_samples = current_signal[::num_skip]
+
+# initialize our output
+voltage_samples = np.zeros(current_samples.size)
+
+# filter input
+u = np.zeros(2)     # present value u[0]=i(n) and past value u[1]=i(n-1)
+y = np.zeros(2)     # present value y[0]=v(n) and past value y[1]=v(n-1)
+
+# ISR with hardware here
+# calculate the output
+for current_idx, current_val in np.ndenumerate(current_samples):
+    
+    # capacitor filter
+    u[0] = current_val
+    # v(n) = (T*i(n) + T*i(n-1) + 2*C*v(n-1))/(2*C)
+    y[0] = (t_sample*u[0] + t_sample*u[1] + 2*C*y[1])/(2*C)
+
+    u[1] = u[0]     # u(n-1) = u(n)
+    y[1] = y[0]     # y(n-1) = y(n)
+
+    voltage_samples[current_idx] = y[0]
+    # end of filter
+
+
+plt.plot(time_array,current_signal,label='full signal',ds='steps')
+plt.plot(tsample_array,current_samples,label='input signal',ds='steps')
+plt.legend()
+plt.show()
+
+plt.figure()
+# following plot has dc offset b/c ideal cap or lack of integration constant
+plt.plot(tsample_array,voltage_samples,label='output signal',ds='steps')
+plt.legend()
+plt.show()
